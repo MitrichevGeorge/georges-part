@@ -1,63 +1,48 @@
 import re
-
-from flask import (
-    Blueprint,
-    session,
-    request,
-    render_template,
-    redirect,
-    url_for,
-)
+from typing import Optional, Union
+from flask import Blueprint, session, request, render_template, redirect, url_for
+from werkzeug.wrappers import Response
 
 from db import initedDB, User
 
 auth_bp = Blueprint("auth", __name__)
 
+FlaskResponse = Union[Response, str]
+
 
 def is_strong_password(password: str) -> bool:
     if len(password) < 8:
         return False
-
     if not re.search(r"[A-Z]", password):
         return False
-
     if not re.search(r"[a-z]", password):
         return False
-
     if not re.search(r"[0-9]", password):
         return False
-
     return True
 
 
-def current_user():
+def current_user() -> Optional[User]:
     if not session.get("logged_in"):
         return None
-
     return initedDB.get_user_by_login(session["username"])
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
-def login():
-
+def login() -> FlaskResponse:
     if session.get("logged_in"):
         return redirect(url_for("main.index"))
 
     if request.method == "POST":
-
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
-
         user = initedDB.get_user_by_login(username)
 
         if user and user.check_password(password):
-
             session.clear()
-
             session["logged_in"] = True
             session["user_id"] = username
             session["username"] = username
-
             return redirect(url_for("main.index"))
 
         return render_template(
@@ -70,36 +55,42 @@ def login():
 
 
 @auth_bp.route("/logout")
-def logout():
-
+def logout() -> Response:
     session.clear()
-
     return redirect(url_for("auth.login"))
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
-def register():
-
+def register() -> FlaskResponse:
     if session.get("logged_in"):
         return redirect(url_for("main.index"))
 
     if request.method == "POST":
-
-        login = request.form.get("login", "").strip()
+        login_val = request.form.get("login", "").strip()
         email = request.form.get("email", "").strip()
-
         password = request.form.get("password", "").strip()
         password2 = request.form.get("password_confirm", "").strip()
 
-        form_data = {
-            "login": login,
-            "email": email,
-        }
+        form_data = {"login": login_val, "email": email}
 
-        if not login or not email or not password:
+        if not login_val or not email or not password:
             return render_template(
                 "register.html",
                 error="Все поля обязательны.",
+                form_data=form_data,
+            )
+
+        if not (4 <= len(login_val) <= 12):
+            return render_template(
+                "register.html",
+                error="Имя пользователя должно быть длиной от 4 до 12 символов.",
+                form_data=form_data,
+            )
+
+        if not re.match(r"^[a-zA-Z0-9_-]+$", login_val):
+            return render_template(
+                "register.html",
+                error="Имя пользователя содержит недопустимые символы.",
                 form_data=form_data,
             )
 
@@ -117,18 +108,14 @@ def register():
                 form_data=form_data,
             )
 
-        if initedDB.get_user_by_login(login):
+        if initedDB.get_user_by_login(login_val):
             return render_template(
                 "register.html",
                 error="Такой пользователь уже существует.",
                 form_data=form_data,
             )
 
-        user = User(
-            login=login,
-            email=email,
-            password=password,
-        )
+        user = User(login=login_val, email=email, password=password)
 
         if initedDB.add_new_user(user):
             return redirect(url_for("auth.login"))
@@ -139,118 +126,83 @@ def register():
             form_data=form_data,
         )
 
+    return render_template("register.html")
+
 
 @auth_bp.route("/profile")
-def profile():
-
+def profile() -> FlaskResponse:
     user = current_user()
-
     if not user:
         return redirect(url_for("auth.login"))
 
     is_editing = session.get("profile_editing", False)
-
-    return render_template(
-        "profile.html",
-        user=user,
-        is_editing=is_editing
-    )
+    return render_template("profile.html", user=user, is_editing=is_editing)
 
 
 @auth_bp.route("/profile/toggle-edit", methods=["POST"])
-def profile_toggle_edit():
+def profile_toggle_edit() -> Response:
     session["profile_editing"] = True
     return redirect(url_for("auth.profile"))
 
 
 @auth_bp.route("/profile/toggle-view", methods=["POST"])
-def profile_toggle_view():
+def profile_toggle_view() -> Response:
     session["profile_editing"] = False
     return redirect(url_for("auth.profile"))
 
 
 @auth_bp.route("/profile/edit", methods=["POST"])
-def edit_profile():
-
+def edit_profile() -> FlaskResponse:
     user = current_user()
-
     if not user:
         return redirect(url_for("auth.login"))
 
-    new_login = request.form.get(
-        "login",
-        ""
-    ).strip()
-
-    new_email = request.form.get(
-        "email",
-        ""
-    ).strip()
+    new_login = request.form.get("login", "").strip()
+    new_email = request.form.get("email", "").strip()
 
     if not new_login or not new_email:
         return render_template(
             "profile.html",
             user=user,
             is_editing=True,
-            error="Все поля обязательны."
+            error="Все поля обязательны.",
         )
 
     if new_login != user.login:
-        exists = initedDB.get_user_by_login(
-            new_login
-        )
+        exists = initedDB.get_user_by_login(new_login)
         if exists:
             return render_template(
                 "profile.html",
                 user=user,
                 is_editing=True,
-                error="Такой логин уже занят."
+                error="Такой логин уже занят.",
             )
 
-    initedDB.update_user(
-        old_login=user.login,
-        login=new_login,
-        email=new_email
-    )
+    initedDB.update_user(old_login=user.login, login=new_login, email=new_email)
 
     session["username"] = new_login
     session["user_id"] = new_login
     session["profile_editing"] = False
 
-    return redirect(
-        url_for("auth.profile")
-    )
+    return redirect(url_for("auth.profile"))
 
 
 @auth_bp.route("/profile/password", methods=["POST"])
-def change_password():
-
+def change_password() -> FlaskResponse:
     user = current_user()
-
     if not user:
         return redirect(url_for("auth.login"))
 
-    old_password = request.form.get(
-        "old_password",
-        ""
-    )
-
-    new_password = request.form.get(
-        "new_password",
-        ""
-    )
-
-    repeat_password = request.form.get(
-        "repeat_password",
-        ""
-    )
+    old_password = request.form.get("old_password", "")
+    new_password = request.form.get("new_password", "")
+    repeat_password = request.form.get("repeat_password", "")
 
     if not user.check_password(old_password):
         return render_template(
             "profile.html",
             user=user,
             is_editing=session.get("profile_editing", False),
-            error="Старый пароль неверный."
+            error="Старый пароль неверный.",
         )
 
     if new_password != repeat_password:
@@ -258,7 +210,7 @@ def change_password():
             "profile.html",
             user=user,
             is_editing=session.get("profile_editing", False),
-            error="Новые пароли не совпадают."
+            error="Новые пароли не совпадают.",
         )
 
     if not is_strong_password(new_password):
@@ -266,72 +218,37 @@ def change_password():
             "profile.html",
             user=user,
             is_editing=session.get("profile_editing", False),
-            error="Пароль слишком простой."
+            error="Пароль слишком простой.",
         )
 
-    initedDB.update_password(
-        user.login,
-        new_password
-    )
-
-    return redirect(
-        url_for("auth.profile")
-    )
+    initedDB.update_password(user.login, new_password)
+    return redirect(url_for("auth.profile"))
 
 
-@auth_bp.route(
-    "/profile/delete",
-    methods=[
-        "GET",
-        "POST"
-    ]
-)
-def delete_account():
-
+@auth_bp.route("/profile/delete", methods=["GET", "POST"])
+def delete_account() -> FlaskResponse:
     user = current_user()
-
     if not user:
-        return redirect(
-            url_for("auth.login")
-        )
+        return redirect(url_for("auth.login"))
 
     if request.method == "POST":
-
-        confirm = request.form.get(
-            "confirm",
-            ""
-        )
-
-        password = request.form.get(
-            "password",
-            ""
-        )
+        confirm = request.form.get("confirm", "")
+        password = request.form.get("password", "")
 
         if confirm != "Я УВЕРЕН":
             return render_template(
                 "delete_account.html",
                 user=user,
-                error="Введите текст подтверждения правильно."
+                error="Введите текст подтверждения правильно.",
             )
 
         if not user.check_password(password):
             return render_template(
-                "delete_account.html",
-                user=user,
-                error="Неверный пароль."
+                "delete_account.html", user=user, error="Неверный пароль."
             )
 
-        initedDB.delete_user(
-            user.login
-        )
-
+        initedDB.delete_user(user.login)
         session.clear()
+        return redirect(url_for("auth.register"))
 
-        return redirect(
-            url_for("auth.register")
-        )
-
-    return render_template(
-        "delete_account.html",
-        user=user
-    )
+    return render_template("delete_account.html", user=user)
