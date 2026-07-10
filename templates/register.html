@@ -1,37 +1,138 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация</title>
+    <title>Регистрация | InnoTour</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght=700&family=Inter:wght=400;500;600&display=swap" rel="stylesheet">
+
+    <style type="text/theme">
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+        }
+        p, label, input, button, a, span {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
-    <h2>Форма регистрации</h2>
-    <form action="/register" method="post">
-        <!-- Поле "Логин" -->
-        <label for="login">Логин:</label><br>
-        <input type="text" id="login" name="login" required><br><br>
+<body class="dark bg-white dark:bg-[#0f172a] dark:text-white flex flex-col min-h-dvh">
+    <header class="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div class="mx-auto flex h-16 items-center gap-8 px-4 sm:px-6 lg:px-8">
+            <a href="#" class="group flex">
+                <span class="text-xl font-bold tracking-widest text-gray-900 uppercase transition-colors group-hover:text-lime-600 dark:text-white group-hover:dark:text-lime-400">InnoTour</span>
+            </a>
+            <nav aria-label="Global" class="hidden md:block ml-auto">
+                <ul class="flex items-center gap-6 text-sm">
+                    <li>
+                        <a class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75" href="#"> Главная </a>
+                    </li>
+                    <li>
+                        <a class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75" href="#"> Карта </a>
+                    </li>
+                    <li>
+                        <a class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75" href="#"> Рекомендованный маршрут </a>
+                    </li>
+                    {% if session.get('logged_in') %}
+                    <li class="flex items-center gap-4 border-l border-gray-200 dark:border-gray-700 pl-6">
+                        <span class="flex items-center gap-1.5 font-medium text-gray-700 dark:text-gray-200">
+                            <i data-lucide="user" class="w-4 h-4 text-lime-500"></i>
+                            {{ session.get('username') }}
+                        </span>
+                        <a class="flex items-center gap-1 text-red-500 hover:text-red-400 font-medium transition-colors" href="{{ url_for('auth.logout') }}">
+                            <i data-lucide="log-out" class="w-4 h-4"></i> Выйти
+                        </a>
+                    </li>
+                    {%     else %}
+                    <li class="border-l border-gray-200 dark:border-gray-700 pl-6">
+                        <a class="rounded-md bg-lime-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-lime-500 transition-colors" href="{{ url_for('auth.login') }}"> Войти </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="flex-1 flex justify-center items-center px-4 py-12">
+        <div class="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-950 dark:text-white mb-2">Регистрация</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Создайте аккаунт для доступа ко всем возможностям</p>
+            </div>
 
-        <!-- Поле "Email" -->
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
+            {% if error %}
+            <div class="flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/30 dark:border-red-900 dark:text-red-400 p-4 rounded-xl mb-6 text-sm">
+                <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
 
-        <!-- Поле "Пароль" -->
-        <label for="password">Пароль:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+            <form action="{{ url_for('auth.register') }}" method="post" class="space-y-4">
+                <div>
+                    <label for="login" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Логин</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </span>
+                        <input type="text" id="login" name="login" value="{{ form_data.login if form_data else '' }}" required
+                            class="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500 outline-none transition-all text-sm">
+                    </div>
+                </div>
 
-        <!-- Поле "Повтор пароля" -->
-        <label for="password_confirm">Повтор пароля:</label><br>
-        <input type="password" id="password_confirm" name="password_confirm" required><br><br>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                        </span>
+                        <input type="email" id="email" name="email" value="{{ form_data.email if form_data else '' }}" required
+                            class="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500 outline-none transition-all text-sm">
+                    </div>
+                </div>
 
-        <!-- Кнопка отправки -->
-        <button type="submit">Зарегистрироваться</button>
-    </form>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Пароль</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                            <i data-lucide="lock" class="w-5 h-5"></i>
+                        </span>
+                        <input type="password" id="password" name="password" required
+                            class="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500 outline-none transition-all text-sm">
+                    </div>
+                </div>
 
-    <!-- (Опционально) Простое сообщение о том, куда отправляется форма -->
-    <p style="color: #666; font-size: 0.9rem;">Данные отправляются методом POST на /register (без JavaScript)</p>
+                <div>
+                    <label for="password_confirm" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Повтор пароля</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                            <i data-lucide="check-square" class="w-5 h-5"></i>
+                        </span>
+                        <input type="password" id="password_confirm" name="password_confirm" required
+                            class="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500 outline-none transition-all text-sm">
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-3 bg-lime-600 hover:bg-lime-500 text-white font-semibold rounded-xl shadow-lg shadow-lime-600/10 hover:shadow-lime-500/20 transition-all duration-200 text-sm mt-4 cursor-pointer">
+                    Зарегистрироваться
+                </button>
+            </form>
+
+            <div class="text-center mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+                Уже есть аккаунт? 
+                <a href="{{ url_for('auth.login') }}" class="text-lime-600 dark:text-lime-400 font-medium hover:underline ml-1">Войти</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
-
 </html>

@@ -1,128 +1,116 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход в систему</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    <title>Вход | InnoTour</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght=700&family=Inter:wght=400;500;600&display=swap" rel="stylesheet">
+
+    <style type="text/theme">
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
         }
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 400px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .error-message {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border-left: 4px solid #c62828;
-        }
-        button[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        button[type="submit"]:active {
-            transform: translateY(0);
-        }
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
-        .register-link a {
-            color: #667eea;
-            text-decoration: none;
-        }
-        .register-link a:hover {
-            text-decoration: underline;
+        p, label, input, button, a, span {
+            font-family: 'Inter', sans-serif;
         }
     </style>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <div class="login-container">
-        <h1>Вход в систему</h1>
-        
-        {% if error %}
-        <div class="error-message">
-            {{ error }}
+
+<body class="dark bg-white dark:bg-[#0f172a] dark:text-white flex flex-col min-h-dvh">
+    <header class="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div class="mx-auto flex h-16 items-center gap-8 px-4 sm:px-6 lg:px-8">
+            <a href="#" class="group flex">
+                <span class="text-xl font-bold tracking-widest text-gray-900 uppercase transition-colors group-hover:text-lime-600 dark:text-white group-hover:dark:text-lime-400">InnoTour</span>
+            </a>
+            <nav aria-label="Global" class="hidden md:block ml-auto">
+                <ul class="flex items-center gap-6 text-sm">
+                    <li>
+                        <a class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75" href="#"> Главная </a>
+                    </li>
+                    <li>
+                        <a class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75" href="#"> Карта </a>
+                    </li>
+                    <li>
+                        <a class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75" href="#"> Рекомендованный маршрут </a>
+                    </li>
+                    {% if session.get('logged_in') %}
+                    <li class="flex items-center gap-4 border-l border-gray-200 dark:border-gray-700 pl-6">
+                        <span class="flex items-center gap-1.5 font-medium text-gray-700 dark:text-gray-200">
+                            <i data-lucide="user" class="w-4 h-4 text-lime-500"></i>
+                            {{ session.get('username') }}
+                        </span>
+                        <a class="flex items-center gap-1 text-red-500 hover:text-red-400 font-medium transition-colors" href="{{ url_for('auth.logout') }}">
+                            <i data-lucide="log-out" class="w-4 h-4"></i> Выйти
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="border-l border-gray-200 dark:border-gray-700 pl-6">
+                        <a class="rounded-md bg-lime-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-lime-500 transition-colors" href="{{ url_for('auth.login') }}"> Войти </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
-        {% endif %}
-        
-        <form method="POST" action="{{ url_for('auth.login') }}">
-            <div class="form-group">
-                <label for="username">Логин</label>
-                <input type="text" id="username" name="username" required autofocus>
+    </header>
+    
+    <main class="flex-1 flex justify-center items-center px-4 py-12">
+        <div class="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-950 dark:text-white mb-2">Вход в систему</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Добро пожаловать обратно в InnoTour</p>
             </div>
-            
-            <div class="form-group">
-                <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" required>
+
+            {% if error %}
+            <div class="flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/30 dark:border-red-900 dark:text-red-400 p-4 rounded-xl mb-6 text-sm">
+                <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                <span>{{ error }}</span>
             </div>
-            
-            <button type="submit" name="submit">Войти</button>
-        </form>
-        
-        <div class="register-link">
-            have not account? <a href="{{ url_for('auth.register') }}"> register </a>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-5">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Логин</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </span>
+                        <input type="text" id="username" name="username" value="{{ username or '' }}" required autofocus
+                            class="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500 outline-none transition-all text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Пароль</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                            <i data-lucide="lock" class="w-5 h-5"></i>
+                        </span>
+                        <input type="password" id="password" name="password" required
+                            class="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500 outline-none transition-all text-sm">
+                    </div>
+                </div>
+
+                <button type="submit" name="submit"
+                    class="w-full py-3 bg-lime-600 hover:bg-lime-500 text-white font-semibold rounded-xl shadow-lg shadow-lime-600/10 hover:shadow-lime-500/20 transition-all duration-200 text-sm mt-2 cursor-pointer">
+                    Войти
+                </button>
+            </form>
+
+            <div class="text-center mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+                Нет аккаунта? 
+                <a href="{{ url_for('auth.register') }}" class="text-lime-600 dark:text-lime-400 font-medium hover:underline ml-1">Зарегистрироваться</a>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
