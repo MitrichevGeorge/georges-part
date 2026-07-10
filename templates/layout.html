@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}InnoTour{% endblock %}</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style type="text/tailwindcss">
+        body,
+        input,
+        button,
+        a,
+        span,
+        p,
+        label {
+            font-family: Inter, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: "Playfair Display", serif;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-white flex flex-col">
+
+    {% include "components/header.html" %}
+
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+</body>
+
+</html>

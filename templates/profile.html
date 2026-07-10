@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль | InnoTour</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="min-h-screen bg-slate-900 text-white">
+
+    {% include "components/header.html" %}
+
+    <main class="mx-auto max-w-3xl px-6 py-12">
+
+        {% if error %}
+        <div class="mb-6 rounded-xl bg-red-900/40 px-5 py-4 text-red-300">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <div class="rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-xl">
+            <h1 class="mb-8 text-3xl font-bold">Профиль</h1>
+
+            <form method="POST" action="{{ url_for('auth.edit_profile') }}" class="space-y-5">
+                <div>
+                    <label class="mb-2 block text-sm text-gray-400">Имя пользователя</label>
+                    <div class="flex items-center gap-3">
+                        <input name="login" value="{{ user.login }}" class="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3">
+                        <i data-lucide="pencil" class="text-lime-400"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-sm text-gray-400">Email</label>
+                    <div class="flex items-center gap-3">
+                        <input name="email" value="{{ user.email }}" class="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3">
+                        <i data-lucide="pencil" class="text-lime-400"></i>
+                    </div>
+                </div>
+
+                <button class="rounded-xl bg-lime-600 px-6 py-3 font-semibold hover:bg-lime-500">
+                    Сохранить изменения
+                </button>
+            </form>
+
+            <hr class="my-10 border-gray-700">
+
+            <h2 class="mb-5 text-xl font-semibold">Смена пароля</h2>
+            <form method="POST" action="{{ url_for('auth.change_password') }}" class="space-y-4">
+                <input type="password" name="old_password" placeholder="Старый пароль" class="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3">
+                <input type="password" name="new_password" placeholder="Новый пароль" class="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3">
+                <input type="password" name="repeat_password" placeholder="Повтор нового пароля" class="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3">
+                
+                <button class="rounded-xl bg-blue-600 px-6 py-3 font-semibold hover:bg-blue-500">
+                    Изменить пароль
+                </button>
+            </form>
+
+            <a href="{{ url_for('auth.delete_account') }}" class="mt-12 block rounded-xl bg-red-600 px-6 py-3 text-center font-semibold hover:bg-red-500">
+                Удалить аккаунт
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
