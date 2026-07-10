@@ -26,7 +26,7 @@
                         <span class="review-date">{{ r.created_at[:10] }}</span>
                     </div>
                     <div class="review-attraction">
-                        <a href="{{ url_for('main.map_view') }}">{{ r.attraction_name }}</a> 
+                        <a href="{{ url_for('main.map_view') }}">{{ r.attraction_name['name'] }}</a> 
                         <!-- url_for('tour_guide', attraction_id=r.attraction_id) -->
                     </div>
                     <div class="review-text">{{ r.text or 'No comment' }}</div>
