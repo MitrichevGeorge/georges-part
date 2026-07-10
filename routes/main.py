@@ -196,7 +196,7 @@ def map_view():
 def streetview_view():
     return render_template("streetview.html", attractions=ATTRACTIONS)
 
-@app.route('/reviews')
+@main_bp.route('/reviews')
 def reviews_page():
     reviews = [
                 (1, 'alex', 5, 'Отличный университет! Очень современный.'),
