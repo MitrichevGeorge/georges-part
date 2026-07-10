@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Tour Guide – {{ attraction.name }}{% endblock %}
+
+{% block content %}
+<div class="tour-container">
+    <div class="tour-header">
+        <h1>{{ attraction.name }}</h1>
+        <p class="tour-address">{{ attraction.address }}</p>
+    </div>
+
+    <div class="tour-image">
+        <img src="{{ url_for('static', filename='images/' + attraction.image) }}" alt="{{ attraction.name }}">
+    </div>
+
+    <div class="tour-audio">
+        <h3>🎧 Audio Guide</h3>
+        <audio controls>
+            <source src="{{ url_for('static', filename=attraction.audio) }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    {% if attraction.status == 'construction' %}
+        <div class="construction-banner">
+            <span class="construction-icon">🚧</span>
+            <span class="construction-text">Under Construction – Meme Zone</span>
+        </div>
+    {% endif %}
+
+    <div class="tour-description">
+        <h3>📖 Description</h3>
+        <p>{{ attraction.long_desc }}</p>
+    </div>
+
+    <div class="tour-actions">
+        <a href="{{ url_for('index') }}" class="btn-tour">← Back to Map</a>
+        <a href="{{ url_for('streetview') }}" class="btn-tour">🚶 Street View</a>
+    </div>
+
+    <div class="tour-nav">
+        {% if current_index > 0 %}
+            <a href="{{ url_for('tour_guide', attraction_id=attractions[current_index-1].id) }}" class="btn-tour-nav">◀ Previous</a>
+        {% endif %}
+        {% if current_index < attractions|length - 1 %}
+            <a href="{{ url_for('tour_guide', attraction_id=attractions[current_index+1].id) }}" class="btn-tour-nav">Next ▶</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -7,7 +7,8 @@
             <a href="{{ url_for('main.reviews_page') }}" class="text-gray-300 transition hover:text-white">Отзывы</a>
             <a href="{{ url_for('main.map_view') }}" class="text-gray-300 transition hover:text-white">Карта</a>
             <a href="{{ url_for('main.streetview_view') }}" class="text-gray-300 transition hover:text-white">StreetView</a>
-            
+            <a href="{{ url_for('tour_guide', attraction_id=1) }}" class="text-gray-300 transition hover:text-white">Гид</a>
+
             {% if session.get("logged_in") %}
                 <div class="ml-4 flex items-center gap-3 border-l border-gray-700 pl-6">
                     <a href="{{ url_for('auth.profile') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-white transition hover:bg-gray-800">

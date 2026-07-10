@@ -224,3 +224,14 @@ def reviews_page():
             'created_at': '2026-07-10'
         })
     return render_template('reviews.html', reviews=review_data, attractions=ATTRACTIONS)
+
+@main_bp.route('/tour/<int:attraction_id>')
+def tour_guide(attraction_id):
+    attraction = next((a for a in ATTRACTIONS if a['id'] == attraction_id), None)
+    if not attraction:
+        return redirect(url_for('index'))
+    current_index = next((i for i, a in enumerate(ATTRACTIONS) if a['id'] == attraction_id), -1)
+    return render_template('tour.html',
+                           attraction=attraction,
+                           attractions=ATTRACTIONS,
+                           current_index=current_index)
