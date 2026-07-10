@@ -217,7 +217,7 @@ def reviews_page():
     for attraction_id, user, rating, text in reviews:
         review_data.append({
             'attraction_id': attraction_id,
-            'attraction_name': ATTRACTIONS[attraction_id],
+            'attraction_name': ATTRACTIONS[attraction_id-1],
             'username': user,
             'rating': rating,
             'text': text,
