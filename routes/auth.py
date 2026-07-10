@@ -1,5 +1,5 @@
 from flask import Blueprint, session, request, render_template, redirect, url_for
-from  db import initedDB
+# from  db import initedDB
 
 auth_bp = Blueprint('auth', __name__)
 
