@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}All Reviews – InnoTravel{% endblock %}
+
+{% block content %}
+<div class="reviews-page-container">
+    <h1>📝 All Reviews</h1>
+    
+    <!-- Filter by attraction -->
+    <div class="filter-section">
+        <label for="filter-attraction">Filter by attraction:</label>
+        <select id="filter-attraction">
+            <option value="all">All</option>
+            {% for a in attractions %}
+                <option value="{{ a.id }}">{{ a.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="reviews-list-all">
+        {% if reviews %}
+            {% for r in reviews %}
+                <div class="review-card" data-attraction="{{ r.attraction_id }}">
+                    <div class="review-header">
+                        <span class="review-user">{{ r.username }}</span>
+                        <span class="review-rating">⭐ {{ r.rating }}</span>
+                        <span class="review-date">{{ r.created_at[:10] }}</span>
+                    </div>
+                    <div class="review-attraction">
+                        <a href="{{ url_for('tour_guide', attraction_id=r.attraction_id) }}">{{ r.attraction_name }}</a>
+                    </div>
+                    <div class="review-text">{{ r.text or 'No comment' }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-reviews">No reviews yet. Be the first!</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filter = document.getElementById('filter-attraction');
+        const cards = document.querySelectorAll('.review-card');
+        
+        filter.addEventListener('change', function() {
+            const selected = this.value;
+            cards.forEach(card => {
+                if (selected === 'all' || card.dataset.attraction === selected) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

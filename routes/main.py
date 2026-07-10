@@ -146,7 +146,6 @@ def chat():
     return render_template("index.html", ai_response=ai_response, error_message=error_message, attractions=ATTRACTIONS)
 
 def query_ai_assistant(user_query):
-    """Send query to AI backend and get response"""
     API_URL = os.getenv("NEURO_API_URL", "https://geovpn.2bd.net:23238")
     CLIENT_API_KEY = os.getenv("CLIENT_API_KEY")
     
@@ -155,10 +154,8 @@ def query_ai_assistant(user_query):
     
     headers = {"X-API-Key": CLIENT_API_KEY, "Content-Type": "application/json"}
     
-    # Format attractions context
     attractions_context = format_attractions_for_ai()
     
-    # System instruction for the AI
     system_instruction = (
         "Ты - дружелюбный и полезный ассистент для туристов в городе Иннополис. "
         "Отвечай кратко и красиво на русском языке. "
@@ -166,7 +163,6 @@ def query_ai_assistant(user_query):
         "Если вопрос о достопримечательностях, предоставь полезную информацию из доступного списка."
     )
     
-    # Combine system instruction with attractions context and user query
     full_prompt = f"{system_instruction}\n\n{attractions_context}\n\nВопрос пользователя: {user_query}"
     
     payload = {
@@ -199,3 +195,32 @@ def map_view():
 @main_bp.route('/streetview')
 def streetview_view():
     return render_template("streetview.html", attractions=ATTRACTIONS)
+
+@app.route('/reviews')
+def reviews_page():
+    reviews = [
+                (1, 'alex', 5, 'Отличный университет! Очень современный.'),
+                (1, 'maria', 4, 'Красивый кампус, но дорогой.'),
+                (2, 'ivan', 3, 'Парк хороший, но маловат.'),
+                (3, 'elena', 5, 'Технопарк просто супер!'),
+                (3, 'alex', 4, 'Отличное место для стартапов.'),
+                (4, 'maria', 5, 'Главная площадь – душа города.'),
+                (5, 'ivan', 4, 'Бассейн чистый, но дорогой.'),
+                (6, 'elena', 5, 'Лицей – мечта для детей.'),
+                (7, 'alex', 3, 'Технопарк Лобачевского – обычный офисник.'),
+                (8, 'maria', 4, 'Строят, но будет круто.'),
+                (9, 'ivan', 5, 'Пешеходник – мем, но прикольно.'),
+                (10, 'elena', 2, 'Технопарк 2 – серый и скучный.'),
+            ]
+
+    review_data = []
+    for attraction_id, user, rating, text in reviews:
+        review_data.append({
+            'attraction_id': attraction_id,
+            'attraction_name': ATTRACTIONS.get(attraction_id, 'Неизвестное место'),
+            'username': user.username,
+            'rating': rating,
+            'text': text,
+            'created_at': '2026-07-10'
+        })
+    return render_template('reviews.html', reviews=review_data, attractions=ATTRACTIONS)
