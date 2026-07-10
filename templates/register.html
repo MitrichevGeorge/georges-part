@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+</head>
+
+<body>
+    <h2>Форма регистрации</h2>
+    <form action="/register" method="post">
+        <!-- Поле "Логин" -->
+        <label for="login">Логин:</label><br>
+        <input type="text" id="login" name="login" required><br><br>
+
+        <!-- Поле "Email" -->
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <!-- Поле "Пароль" -->
+        <label for="password">Пароль:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <!-- Поле "Повтор пароля" -->
+        <label for="password_confirm">Повтор пароля:</label><br>
+        <input type="password" id="password_confirm" name="password_confirm" required><br><br>
+
+        <!-- Кнопка отправки -->
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <!-- (Опционально) Простое сообщение о том, куда отправляется форма -->
+    <p style="color: #666; font-size: 0.9rem;">Данные отправляются методом POST на /register (без JavaScript)</p>
+</body>
+
+</html>
