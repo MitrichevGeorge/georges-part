@@ -6,8 +6,13 @@ function init() {
     map = new ymaps.Map('map', {
         center: [55.7570, 48.7420],
         zoom: 14,
-        controls: ['zoomControl', 'fullscreenControl']
+        controls: ['zoomControl', 'fullscreenControl'],
+        behaviors: ['drag', 'scrollZoom']
+    }, {
+        suppressMapOpenBlock: true
     });
+
+    map.options.set('yandexMapDisablePoiInteractivity', true);
 
     ATTRACTIONS.forEach(attraction => {
         const placemark = new ymaps.Placemark(
@@ -74,11 +79,17 @@ function showTooltip(id) {
     document.getElementById('tooltip-name').textContent = attr.name;
     document.getElementById('tooltip-desc').textContent = attr.desc;
     document.getElementById('tooltip-addr').textContent = attr.address;
+    
     tooltip.style.display = 'flex';
+    // Добавляем класс для анимации
+    setTimeout(() => tooltip.classList.add('show'), 10);
 }
 
 function hideTooltip() {
-    tooltip.style.display = 'none';
+    tooltip.classList.remove('show');
+    setTimeout(() => {
+        tooltip.style.display = 'none';
+    }, 200);
 }
 
 function showDetailPanel(id) {

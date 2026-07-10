@@ -102,7 +102,6 @@ ATTRACTIONS = [
 ]
 
 def format_attractions_for_ai():
-    """Format attractions list as a string for AI context"""
     attractions_text = "Достопримечательности Иннополиса:\n"
     for attraction in ATTRACTIONS:
         attractions_text += f"- {attraction['name']}: {attraction['desc']} (адрес: {attraction['address']})\n"
@@ -110,7 +109,7 @@ def format_attractions_for_ai():
 
 @main_bp.route('/')
 def index():
-    return redirect(url_for('main.map_view'))
+    return redirect(url_for('main.index_chat'))
 
 @main_bp.route('/index', methods=['GET', 'POST'])
 def index_chat():

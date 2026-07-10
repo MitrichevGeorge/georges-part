@@ -12,57 +12,55 @@
             <div class="mb-3">
                 <img id="tooltip-img" src="" alt="attraction" class="w-full h-32 object-cover rounded">
             </div>
-            <div>
+            <div class="ml-5 font-bold">
                 <h3 id="tooltip-name" class="font-bold text-white mb-1">Attraction</h3>
                 <p id="tooltip-desc" class="text-sm text-gray-300 mb-2">Description</p>
                 <span class="text-xs text-gray-400" id="tooltip-addr"></span>
             </div>
         </div>
 
-        <div id="detail-panel" class="detail-panel fixed right-4 top-20 bg-gray-900 rounded-xl shadow-2xl z-50 max-w-md border border-gray-700 overflow-y-auto" style="display:none; max-height: 80vh;">
-            <button class="panel-close absolute top-4 right-4 text-gray-400 hover:text-white z-10 transition" id="panel-close">
-                <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
+        <div id="detail-panel" class="detail-panel fixed right-4 top-20 bg-gray-900 rounded-lg shadow-lg z-50 max-w-sm border border-gray-700 overflow-y-auto" style="display:none; max-height: 80vh;">
+            <button class="panel-close absolute top-3 right-3 text-white text-2xl hover:text-gray-300 z-10" id="panel-close">&times;</button>
 
             <div class="panel-image">
                 <img id="panel-img" src="" alt="attraction" class="w-full h-48 object-cover">
             </div>
 
-            <div class="panel-body p-6">
-                <h2 id="panel-name" class="text-2xl font-bold mb-2 text-white pr-6">Attraction</h2>
-                <p id="panel-desc" class="text-gray-300 mb-3 text-sm leading-relaxed">Description</p>
-                <p class="panel-address text-sm text-gray-400 mb-4" id="panel-addr"></p>
+            <div class="panel-body p-4">
+                <h2 id="panel-name" class="text-2xl font-bold mb-2">Attraction</h2>
+                <p id="panel-desc" class="text-gray-300 mb-2">Description</p>
+                <p class="panel-address text-sm text-gray-400 mb-3" id="panel-addr"></p>
 
-                <div class="panel-rating mb-6 flex items-center gap-2 bg-gray-800 rounded-lg px-4 py-3">
-                    <span class="text-xl">⭐</span>
-                    <span id="panel-rating" class="text-lg font-semibold text-white">0.0</span>
-                    <span class="text-sm text-gray-400">(<span id="panel-review-count">0</span>)</span>
+                <div class="panel-rating mb-4 flex items-center gap-2">
+                    <span>⭐</span>
+                    <span id="panel-rating" class="text-lg font-semibold">0.0</span>
+                    <span class="text-sm text-gray-400">(<span id="panel-review-count">0</span> отзывов)</span>
                 </div>
 
                 <div class="reviews-section">
-                    <h4 class="font-bold mb-4 text-white text-lg">Отзывы</h4>
-                    <div id="reviews-list" class="reviews-list mb-6 space-y-3 max-h-64 overflow-y-auto">
-                        <p class="no-reviews text-gray-500 text-sm">Пока нет отзывов</p>
+                    <h4 class="font-bold mb-3">Отзывы</h4>
+                    <div id="reviews-list" class="reviews-list mb-4 space-y-3">
+                        <p class="no-reviews text-gray-400 text-sm">Пока нет отзывов</p>
                     </div>
 
                     {% if session.get('logged_in') %}
-                        <form id="review-form" class="review-form space-y-3 border-t border-gray-700 pt-4">
+                        <form id="review-form" class="review-form space-y-2">
                             <input type="hidden" id="review-attraction-id" value="">
-                            <div class="form-row space-y-3">
-                                <select id="review-rating" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white font-medium hover:border-gray-600 transition focus:border-lime-500 focus:ring-1 focus:ring-lime-500 outline-none">
-                                    <option value="">Выберите оценку</option>
-                                    <option value="5">⭐⭐⭐⭐⭐ Отлично</option>
-                                    <option value="4">⭐⭐⭐⭐ Хорошо</option>
-                                    <option value="3">⭐⭐⭐ Нормально</option>
-                                    <option value="2">⭐⭐ Плохо</option>
-                                    <option value="1">⭐ Очень плохо</option>
+                            <div class="form-row space-y-2">
+                                <select id="review-rating" required class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white">
+                                    <option value="">Оценка</option>
+                                    <option value="5">⭐⭐⭐⭐⭐</option>
+                                    <option value="4">⭐⭐⭐⭐</option>
+                                    <option value="3">⭐⭐⭐</option>
+                                    <option value="2">⭐⭐</option>
+                                    <option value="1">⭐</option>
                                 </select>
-                                <textarea id="review-text" placeholder="Поделитесь вашим мнением..." rows="3" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white text-sm leading-relaxed font-medium hover:border-gray-600 transition focus:border-lime-500 focus:ring-1 focus:ring-lime-500 outline-none resize-none placeholder-gray-500"></textarea>
-                                <button type="submit" class="btn-submit-review w-full bg-gradient-to-r from-lime-600 to-lime-500 hover:from-lime-500 hover:to-lime-400 text-white font-semibold py-2.5 rounded-lg transition transform hover:scale-105 active:scale-95">Отправить отзыв</button>
+                                <textarea id="review-text" placeholder="Напишите отзыв…" rows="2" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"></textarea>
+                                <button type="submit" class="btn-submit-review w-full bg-lime-600 hover:bg-lime-500 text-white font-semibold py-2 rounded transition">Отправить</button>
                             </div>
                         </form>
                     {% else %}
-                        <p class="login-to-review text-sm text-gray-400 text-center border-t border-gray-700 pt-4">🔒 <a href="{{ url_for('auth.login') }}" class="text-lime-400 hover:text-lime-300 font-semibold transition">Войдите</a> чтобы оставить отзыв</p>
+                        <p class="login-to-review text-sm text-gray-400">🔒 <a href="{{ url_for('auth.login') }}" class="text-lime-400 hover:text-lime-300">Войдите</a> чтобы оставить отзыв</p>
                     {% endif %}
                 </div>
             </div>
