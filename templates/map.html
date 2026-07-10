@@ -1,0 +1,6 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="map" class="w-full h-screen"></div>
+<script src="https://maps.googleapis.com/maps/api/js?key=ВАШ_API_KEY"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+{% endblock %}
