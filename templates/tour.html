@@ -1,50 +1,64 @@
 {% extends "layout.html" %}
 
-{% block title %}Гид | InnoTour{% endblock %}
+{% block title %}{{ attraction.name }} | InnoTour{% endblock %}
 
 {% block content %}
-<div class="tour-container">
-    <div class="tour-header">
-        <h1>{{ attraction.name }}</h1>
-        <p class="tour-address">{{ attraction.address }}</p>
-    </div>
+<main class="max-w-3xl mx-auto px-4 py-12">
+    <a href="{{ url_for('main.map_view') }}" class="inline-flex items-center text-sm text-gray-500 hover:text-lime-600 dark:text-gray-400 dark:hover:text-lime-400 mb-6 transition-colors">
+        <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Назад к карте
+    </a>
 
-    <div class="tour-image">
-        <img src="{{ url_for('static', filename='images/' + attraction.image) }}" alt="{{ attraction.name }}">
-    </div>
-
-    <div class="tour-audio">
-        <h3>🎧 Audio Guide</h3>
-        <audio controls>
-            <source src="{{ url_for('static', filename=attraction.audio) }}" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-    </div>
-
-    {% if attraction.status == 'construction' %}
-        <div class="construction-banner">
-            <span class="construction-icon">🚧</span>
-            <span class="construction-text">Under Construction – Meme Zone</span>
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <div class="aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
+            <img src="{{ url_for('static', filename='images/' + attraction.image) }}" alt="{{ attraction.name }}" class="w-full h-full object-cover">
         </div>
-    {% endif %}
 
-    <div class="tour-description">
-        <h3>📖 Description</h3>
-        <p>{{ attraction.long_desc }}</p>
+        <div class="p-8">
+            <h1 class="text-3xl font-bold text-gray-950 dark:text-white mb-2">{{ attraction.name }}</h1>
+            <div class="flex items-center text-gray-500 dark:text-gray-400 text-sm mb-6">
+                <i data-lucide="map-pin" class="w-4 h-4 mr-1.5"></i> {{ attraction.address }}
+            </div>
+
+            {% if attraction.status == 'construction' %}
+            <div class="flex items-center gap-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-400 p-4 rounded-xl mb-6 text-sm">
+                <i data-lucide="construction" class="w-5 h-5"></i>
+                <span class="font-medium">Under Construction – Meme Zone</span>
+            </div>
+            {% endif %}
+
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Аудиогид</h3>
+                <audio controls class="w-full">
+                    <source src="{{ url_for('static', filename=attraction.audio) }}" type="audio/mpeg">
+                    Ваш браузер не поддерживает аудио.
+                </audio>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Описание</h3>
+                <p class="text-gray-600 dark:text-gray-300 leading-relaxed">{{ attraction.long_desc }}</p>
+            </div>
+
+            <div class="flex flex-wrap gap-4 pt-6 border-t border-gray-100 dark:border-gray-800">
+                <a href="{{ url_for('main.streetview_view') }}" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-lime-600 hover:bg-lime-500 text-white rounded-xl text-sm font-medium transition-all">
+                    <i data-lucide="map" class="w-4 h-4"></i> Street View
+                </a>
+            </div>
+        </div>
     </div>
 
-    <div class="tour-actions">
-        <a href="{{ url_for('main.map_view') }}" class="btn-tour">← Back to Map</a>
-        <a href="{{ url_for('main.streetview_view') }}" class="btn-tour">🚶 Street View</a>
-    </div>
-
-    <div class="tour-nav">
+    <div class="grid grid-cols-2 gap-4 mt-8">
         {% if current_index > 0 %}
-            <a href="{{ url_for('main.tour_guide', attraction_id=attractions[current_index-1].id) }}" class="btn-tour-nav">◀ Previous</a>
+            <a href="{{ url_for('main.tour_guide', attraction_id=attractions[current_index-1].id) }}" class="flex items-center justify-center py-3 border border-gray-200 dark:border-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 transition-all">
+                ← Назад
+            </a>
         {% endif %}
         {% if current_index < attractions|length - 1 %}
-            <a href="{{ url_for('main.tour_guide', attraction_id=attractions[current_index+1].id) }}" class="btn-tour-nav">Next ▶</a>
+            <a href="{{ url_for('main.tour_guide', attraction_id=attractions[current_index+1].id) }}" class="flex items-center justify-center py-3 border border-gray-200 dark:border-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 transition-all">
+                Далее →
+            </a>
         {% endif %}
     </div>
-</div>
+</main>
+
 {% endblock %}
