@@ -1,0 +1,7 @@
+pydantic
+requests
+flask
+flask_session
+redis
+gunicorn
+python-dotenv
