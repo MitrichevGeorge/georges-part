@@ -11,25 +11,10 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_REDIS'] = redis.Redis(host='localhost', port=6379, db=0)
-app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-
-Session(app)
 
 
-app.register_blueprint(
-    main_bp
-)
+app.register_blueprint(main_bp)
+app.register_blueprint(auth_bp, url_prefix='/auth')
 
-app.register_blueprint(
-    auth_bp,
-    url_prefix="/auth"
-)
-
-
-if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=5000,
-        debug=True
-    )
+if __name__ == '__main__':
+    app.run(debug=True)
