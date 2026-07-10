@@ -10,16 +10,12 @@
         Добро пожаловать,
         <span class="font-semibold text-lime-400">{{ session["username"] }}</span>
     </p>
-    {% else %}
-    <a href="{{ url_for('auth.login') }}"
-       class="flex items-center gap-2 rounded-xl bg-lime-600 px-6 py-3 font-semibold transition hover:bg-lime-500 mb-12">
-       <i data-lucide="log-in"></i> Войти
-    </a>
     {% endif %}
 
     <div class="w-full max-w-2xl rounded-lg border border-lime-600 p-8 bg-gray-900 shadow-xl">
-        <h2 class="text-2xl font-bold text-lime-400 mb-6 flex items-center gap-3">
-            <i data-lucide="bot-message-square"></i> Помощник по Иннополису
+        <h2 class="text-2xl font-black text-lime-400 mb-6 flex items-center gap-3 uppercase tracking-widest border-b border-lime-600/30 pb-4">
+            <i data-lucide="bot-message-square"></i> 
+            Помощник по Иннополису
         </h2>
         
         <form method="POST" action="{{ url_for('main.chat') }}" class="space-y-4">
