@@ -34,16 +34,16 @@
     </div>
 
     <div class="tour-actions">
-        <a href="{{ url_for('index') }}" class="btn-tour">← Back to Map</a>
-        <a href="{{ url_for('streetview') }}" class="btn-tour">🚶 Street View</a>
+        <a href="{{ url_for('main.map_view') }}" class="btn-tour">← Back to Map</a>
+        <a href="{{ url_for('main.streetview_view') }}" class="btn-tour">🚶 Street View</a>
     </div>
 
     <div class="tour-nav">
         {% if current_index > 0 %}
-            <a href="{{ url_for('tour_guide', attraction_id=attractions[current_index-1].id) }}" class="btn-tour-nav">◀ Previous</a>
+            <a href="{{ url_for('main.tour_guide', attraction_id=attractions[current_index-1].id) }}" class="btn-tour-nav">◀ Previous</a>
         {% endif %}
         {% if current_index < attractions|length - 1 %}
-            <a href="{{ url_for('tour_guide', attraction_id=attractions[current_index+1].id) }}" class="btn-tour-nav">Next ▶</a>
+            <a href="{{ url_for('main.tour_guide', attraction_id=attractions[current_index+1].id) }}" class="btn-tour-nav">Next ▶</a>
         {% endif %}
     </div>
 </div>
