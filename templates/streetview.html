@@ -1,6 +1,31 @@
 {% extends "layout.html" %}
+
+{% block title %}StreetView | InnoTour{% endblock %}
+
 {% block content %}
-<div id="pano" class="w-full h-screen"></div>
-<script src="https://maps.googleapis.com/maps/api/js?key=ВАШ_API_KEY"></script>
+
+<div class="w-full h-full">
+    <div id="sv-container" class="w-full relative" style="height: 100vh;">
+        <div id="panorama" class="w-full h-full"></div>
+
+        <div class="absolute top-6 left-6 bg-gray-900 rounded-lg px-4 py-2 z-30 border border-gray-700">
+            <p id="sv-location" class="text-white font-semibold">📍 Location</p>
+        </div>
+
+        <div class="absolute bottom-6 left-6 flex gap-3 z-30">
+            <button id="sv-random" class="bg-lime-600 hover:bg-lime-500 text-white font-semibold py-2 px-4 rounded-lg transition">Случайное место</button>
+            <a href="{{ url_for('main.map_view') }}" class="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition flex items-center gap-2">
+                <i data-lucide="map" class="w-4 h-4"></i>
+                На карту
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ATTRACTIONS = {{ attractions|tojson|safe }};
+</script>
+
 <script src="{{ url_for('static', filename='js/streetview.js') }}"></script>
+
 {% endblock %}

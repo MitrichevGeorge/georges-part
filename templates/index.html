@@ -1,74 +1,33 @@
-<!DOCTYPE html>
-<html lang="ru" class="dark">
+{% extends "layout.html" %}
 
-<head>
+{% block title %}Главная | InnoTour{% endblock %}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block content %}
 
-    <title>Главная | InnoTour</title>
+<main class="mx-auto flex max-w-7xl flex-col items-center justify-center px-6 py-24">
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <h1 class="mb-6 text-5xl font-bold">
+        Hello World
+    </h1>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {% if session.get("logged_in") %}
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap"
-        rel="stylesheet">
+    <p class="text-lg text-gray-300">
+        Добро пожаловать,
+        <span class="font-semibold text-lime-400">
+            {{ session["username"] }}
+        </span>
+    </p>
 
-    <style type="text/tailwindcss">
-        h1 {
-            font-family: "Playfair Display", serif;
-        }
+    {% else %}
 
-        body,
-        p,
-        a,
-        button,
-        input,
-        span {
-            font-family: "Inter", sans-serif;
-        }
-    </style>
+    <a href="{{ url_for('auth.login') }}"
+       class="rounded-xl bg-lime-600 px-6 py-3 font-semibold transition hover:bg-lime-500">
+        Войти
+    </a>
 
-</head>
+    {% endif %}
 
-<body class="min-h-screen bg-slate-900 text-white">
+</main>
 
-    {% include "components/header.html" %}
-
-    <main class="mx-auto flex max-w-7xl flex-col items-center justify-center px-6 py-24">
-
-        <h1 class="mb-6 text-5xl font-bold">
-            Hello World
-        </h1>
-
-        {% if session.get("logged_in") %}
-
-        <p class="text-lg text-gray-300">
-            Добро пожаловать,
-            <span class="font-semibold text-lime-400">
-                {{ session["username"] }}
-            </span>
-        </p>
-
-        {% else %}
-
-        <a href="{{ url_for('auth.login') }}"
-           class="rounded-xl bg-lime-600 px-6 py-3 font-semibold transition hover:bg-lime-500">
-            Войти
-        </a>
-
-        {% endif %}
-
-    </main>
-
-    <script>
-        lucide.createIcons();
-    </script>
-
-</body>
-
-</html>
+{% endblock %}
