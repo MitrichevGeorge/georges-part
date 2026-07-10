@@ -223,4 +223,5 @@ def reviews_page():
             'text': text,
             'created_at': '2026-07-10'
         })
+    print(review_data)
     return render_template('reviews.html', reviews=review_data, attractions=ATTRACTIONS)
