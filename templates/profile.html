@@ -7,118 +7,79 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-
 <body class="min-h-screen bg-slate-900 text-white">
-
     {% include "components/header.html" %}
-
     <main class="mx-auto max-w-3xl px-6 py-12">
-
         {% if error %}
         <div class="mb-6 rounded-xl bg-red-900/40 px-5 py-4 text-red-300">
             {{ error }}
         </div>
         {% endif %}
-
         <div class="rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-xl">
             <h1 class="mb-8 text-3xl font-bold">Профиль</h1>
-
-            <form method="POST" action="{{ url_for('auth.edit_profile') }}" class="space-y-6">
-    
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    <div class="profile-field-group">
-                        <label class="mb-1 block text-sm text-gray-400">Имя пользователя</label>
-                        
-                        <div class="view-mode flex items-center justify-between rounded-xl border border-transparent bg-gray-800/40 px-4 py-3 transition hover:bg-gray-800/80">
-                            <span class="text-base font-medium text-gray-200 truncate">{{ user.login }}</span>
-                            <button type="button" class="edit-btn text-lime-400 hover:text-lime-300 cursor-pointer p-1 flex-shrink-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="profile-field-group">
+                    <label class="mb-1 block text-sm text-gray-400">Имя пользователя</label>
+                    {% if is_editing %}
+                    <form method="POST" action="{{ url_for('auth.edit_profile') }}" class="flex items-center gap-2" id="main-edit-form">
+                        <input name="login" value="{{ user.login }}" class="w-full rounded-xl border border-lime-500 bg-gray-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-lime-500/20">
+                    {% else %}
+                    <div class="view-mode flex items-center justify-between rounded-xl border border-transparent bg-gray-800/40 px-4 py-3 transition hover:bg-gray-800/80">
+                        <span class="text-base font-medium text-gray-200 truncate">{{ user.login }}</span>
+                        <form method="POST" action="{{ url_for('auth.profile_toggle_edit') }}">
+                            <button type="submit" class="text-lime-400 hover:text-lime-300 cursor-pointer p-1 flex-shrink-0">
                                 <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
-                        </div>
-
-                        <div class="edit-mode hidden flex items-center gap-2">
-                            <input name="login" value="{{ user.login }}" class="w-full rounded-xl border border-lime-500 bg-gray-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-lime-500/20">
-                            <button type="button" class="cancel-btn text-gray-400 hover:text-gray-200 cursor-pointer p-2 flex-shrink-0">
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="profile-field-group">
+                    <label class="mb-1 block text-sm text-gray-400">Email</label>
+                    {% if is_editing %}
+                        <input name="email" value="{{ user.email }}" class="w-full rounded-xl border border-lime-500 bg-gray-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-lime-500/20">
+                        <form method="POST" action="{{ url_for('auth.profile_toggle_view') }}" class="flex-shrink-0">
+                            <button type="submit" class="text-gray-400 hover:text-gray-200 cursor-pointer p-2">
                                 <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
-                        </div>
-                    </div>
-
-                    <div class="profile-field-group">
-                        <label class="mb-1 block text-sm text-gray-400">Email</label>
-                        
-                        <div class="view-mode flex items-center justify-between rounded-xl border border-transparent bg-gray-800/40 px-4 py-3 transition hover:bg-gray-800/80">
-                            <span class="text-base font-medium text-gray-200 truncate">{{ user.email }}</span>
-                            <button type="button" class="edit-btn text-lime-400 hover:text-lime-300 cursor-pointer p-1 flex-shrink-0">
+                        </form>
+                    </form>
+                    {% else %}
+                    <div class="view-mode flex items-center justify-between rounded-xl border border-transparent bg-gray-800/40 px-4 py-3 transition hover:bg-gray-800/80">
+                        <span class="text-base font-medium text-gray-200 truncate">{{ user.email }}</span>
+                        <form method="POST" action="{{ url_for('auth.profile_toggle_edit') }}">
+                            <button type="submit" class="text-lime-400 hover:text-lime-300 cursor-pointer p-1 flex-shrink-0">
                                 <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
-                        </div>
-
-                        <div class="edit-mode hidden flex items-center gap-2">
-                            <input name="email" value="{{ user.email }}" class="w-full rounded-xl border border-lime-500 bg-gray-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-lime-500/20">
-                            <button type="button" class="cancel-btn text-gray-400 hover:text-gray-200 cursor-pointer p-2 flex-shrink-0">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                        </div>
+                        </form>
                     </div>
-
+                    {% endif %}
                 </div>
-
-                <div class="pt-2">
-                    <button type="submit" class="w-full md:w-auto rounded-xl bg-lime-600 px-6 py-3 font-semibold hover:bg-lime-500 transition cursor-pointer">
-                        Сохранить изменения
-                    </button>
-                </div>
-            </form>
-
+            </div>
+            {% if is_editing %}
+            <div class="pt-2 mb-6">
+                <button type="submit" form="main-edit-form" class="w-full md:w-auto rounded-xl bg-lime-600 px-6 py-3 font-semibold hover:bg-lime-500 transition cursor-pointer">
+                    Сохранить изменения
+                </button>
+            </div>
+            {% endif %}
             <hr class="my-10 border-gray-700">
-
             <h2 class="mb-5 text-xl font-semibold">Смена пароля</h2>
             <form method="POST" action="{{ url_for('auth.change_password') }}" class="space-y-4">
                 <input type="password" name="old_password" placeholder="Старый пароль" class="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3">
                 <input type="password" name="new_password" placeholder="Новый пароль" class="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3">
                 <input type="password" name="repeat_password" placeholder="Повтор нового пароля" class="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3">
-                
                 <button class="rounded-xl bg-blue-600 px-6 py-3 font-semibold hover:bg-blue-500 transition cursor-pointer">
                     Изменить пароль
                 </button>
             </form>
-
             <a href="{{ url_for('auth.delete_account') }}" class="mt-12 block rounded-xl bg-red-600 px-6 py-3 text-center font-semibold hover:bg-red-500 transition">
                 Удалить аккаунт
             </a>
         </div>
-
     </main>
-
     <script>
-        // Инициализация иконок Lucide
         lucide.createIcons();
-
-        // Скрипт для переключения режимов "Просмотр" / "Редактирование"
-        document.querySelectorAll('.profile-field-group').forEach(group => {
-            const viewMode = group.querySelector('.view-mode');
-            const editMode = group.querySelector('.edit-mode');
-            const editBtn = group.querySelector('.edit-btn');
-            const cancelBtn = group.querySelector('.cancel-btn');
-            const input = group.querySelector('input');
-
-            // При клике на карандаш: прячем текст, показываем инпут
-            editBtn.addEventListener('click', () => {
-                viewMode.classList.add('hidden');
-                editMode.classList.remove('hidden');
-                input.focus(); // Сразу ставим фокус в инпут для удобства
-            });
-
-            // При клике на крестик: возвращаем как было
-            cancelBtn.addEventListener('click', () => {
-                editMode.classList.add('hidden');
-                viewMode.classList.remove('hidden');
-                // Сбрасываем значение инпута до изначального, если пользователь что-то стёр
-                input.value = viewMode.querySelector('span').textContent.trim();
-            });
-        });
     </script>
 </body>
 </html>

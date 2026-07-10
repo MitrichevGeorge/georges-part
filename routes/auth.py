@@ -148,10 +148,25 @@ def profile():
     if not user:
         return redirect(url_for("auth.login"))
 
+    is_editing = session.get("profile_editing", False)
+
     return render_template(
         "profile.html",
         user=user,
+        is_editing=is_editing
     )
+
+
+@auth_bp.route("/profile/toggle-edit", methods=["POST"])
+def profile_toggle_edit():
+    session["profile_editing"] = True
+    return redirect(url_for("auth.profile"))
+
+
+@auth_bp.route("/profile/toggle-view", methods=["POST"])
+def profile_toggle_view():
+    session["profile_editing"] = False
+    return redirect(url_for("auth.profile"))
 
 
 @auth_bp.route("/profile/edit", methods=["POST"])
@@ -162,45 +177,35 @@ def edit_profile():
     if not user:
         return redirect(url_for("auth.login"))
 
-
     new_login = request.form.get(
         "login",
         ""
     ).strip()
-
 
     new_email = request.form.get(
         "email",
         ""
     ).strip()
 
-
-
     if not new_login or not new_email:
-
         return render_template(
             "profile.html",
             user=user,
+            is_editing=True,
             error="Все поля обязательны."
         )
 
-
-
     if new_login != user.login:
-
         exists = initedDB.get_user_by_login(
             new_login
         )
-
         if exists:
-
             return render_template(
                 "profile.html",
                 user=user,
+                is_editing=True,
                 error="Такой логин уже занят."
             )
-
-
 
     initedDB.update_user(
         old_login=user.login,
@@ -208,17 +213,13 @@ def edit_profile():
         email=new_email
     )
 
-
-
     session["username"] = new_login
     session["user_id"] = new_login
-
-
+    session["profile_editing"] = False
 
     return redirect(
         url_for("auth.profile")
     )
-
 
 
 @auth_bp.route("/profile/password", methods=["POST"])
@@ -228,8 +229,6 @@ def change_password():
 
     if not user:
         return redirect(url_for("auth.login"))
-
-
 
     old_password = request.form.get(
         "old_password",
@@ -246,49 +245,38 @@ def change_password():
         ""
     )
 
-
-
     if not user.check_password(old_password):
-
         return render_template(
             "profile.html",
             user=user,
+            is_editing=session.get("profile_editing", False),
             error="Старый пароль неверный."
         )
 
-
-
     if new_password != repeat_password:
-
         return render_template(
             "profile.html",
             user=user,
+            is_editing=session.get("profile_editing", False),
             error="Новые пароли не совпадают."
         )
 
-
-
     if not is_strong_password(new_password):
-
         return render_template(
             "profile.html",
             user=user,
+            is_editing=session.get("profile_editing", False),
             error="Пароль слишком простой."
         )
-
-
 
     initedDB.update_password(
         user.login,
         new_password
     )
 
-
     return redirect(
         url_for("auth.profile")
     )
-
-
 
 
 @auth_bp.route(
@@ -302,16 +290,12 @@ def delete_account():
 
     user = current_user()
 
-
     if not user:
         return redirect(
             url_for("auth.login")
         )
 
-
-
     if request.method == "POST":
-
 
         confirm = request.form.get(
             "confirm",
@@ -323,42 +307,29 @@ def delete_account():
             ""
         )
 
-
-
         if confirm != "Я УВЕРЕН":
-
             return render_template(
                 "delete_account.html",
                 user=user,
                 error="Введите текст подтверждения правильно."
             )
 
-
-
         if not user.check_password(password):
-
             return render_template(
                 "delete_account.html",
                 user=user,
                 error="Неверный пароль."
             )
 
-
-
         initedDB.delete_user(
             user.login
         )
 
-
-
         session.clear()
-
 
         return redirect(
             url_for("auth.register")
         )
-
-
 
     return render_template(
         "delete_account.html",
