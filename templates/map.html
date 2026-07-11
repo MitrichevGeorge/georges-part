@@ -71,6 +71,7 @@
 <script>
     const ATTRACTIONS = {{ attractions|tojson|safe }};
     const STATIC_URL = "{{ url_for('static', filename='') }}";
+    const TARGET_ATTRACTION_ID = {{ target_id|tojson|safe if target_id is not none else 'null' }};
 </script>
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>

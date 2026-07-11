@@ -1,11 +1,24 @@
 ymaps.ready(init);
 
 let map, tooltip, detailPanel, currentAttractionId;
+let pinnedAttractionId = null;
 
 function init() {
+    let mapCenter = [55.7570, 48.7420];
+    let mapZoom = 14;
+
+    let targetAttraction = null;
+    if (TARGET_ATTRACTION_ID !== null) {
+        targetAttraction = ATTRACTIONS.find(a => a.id === TARGET_ATTRACTION_ID);
+        if (targetAttraction) {
+            mapCenter = [targetAttraction.lat, targetAttraction.lng];
+            mapZoom = 18;
+        }
+    }
+
     map = new ymaps.Map('map', {
-        center: [55.7570, 48.7420],
-        zoom: 14,
+        center: mapCenter,
+        zoom: mapZoom,
         controls: ['zoomControl', 'fullscreenControl'],
         behaviors: ['drag', 'scrollZoom']
     }, {
@@ -29,8 +42,9 @@ function init() {
             showTooltip(id);
         });
 
-        placemark.events.add('mouseleave', function() {
-            hideTooltip();
+        placemark.events.add('mouseleave', function(e) {
+            const id = e.get('target').properties.get('attractionId');
+            hideTooltip(id);
         });
 
         placemark.events.add('click', function(e) {
@@ -43,6 +57,10 @@ function init() {
     detailPanel = document.getElementById('detail-panel');
 
     document.getElementById('panel-close').addEventListener('click', closeDetailPanel);
+
+    if (targetAttraction) {
+        showDetailPanel(targetAttraction.id);
+    }
 
     const form = document.getElementById('review-form');
     if (form) {
@@ -57,7 +75,11 @@ function init() {
             fetch('/api/reviews', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ attraction_id: parseInt(attractionId), rating: parseInt(rating), text: text })
+                body: JSON.stringify({
+                    attraction_id: parseInt(attractionId),
+                    rating: parseInt(rating),
+                    text: text
+                })
             })
             .then(res => res.json())
             .then(data => {
@@ -81,14 +103,17 @@ function showTooltip(id) {
     document.getElementById('tooltip-addr').textContent = attr.address;
     
     tooltip.style.display = 'flex';
-    // Добавляем класс для анимации
     setTimeout(() => tooltip.classList.add('show'), 10);
 }
 
-function hideTooltip() {
+function hideTooltip(id) {
+    if (id === pinnedAttractionId) return;
+
     tooltip.classList.remove('show');
     setTimeout(() => {
-        tooltip.style.display = 'none';
+        if (pinnedAttractionId === null) {
+            tooltip.style.display = 'none';
+        }
     }, 200);
 }
 
@@ -97,11 +122,15 @@ function showDetailPanel(id) {
     if (!attr) return;
 
     currentAttractionId = id;
+    pinnedAttractionId = id;
+
     document.getElementById('panel-img').src = STATIC_URL + 'images/' + attr.image;
     document.getElementById('panel-name').textContent = attr.name;
     document.getElementById('panel-desc').textContent = attr.desc;
     document.getElementById('panel-addr').textContent = attr.address;
     document.getElementById('review-attraction-id').value = id;
+
+    showTooltip(id);
 
     detailPanel.style.display = 'block';
     refreshReviews(id);
@@ -109,6 +138,14 @@ function showDetailPanel(id) {
 
 function closeDetailPanel() {
     detailPanel.style.display = 'none';
+    pinnedAttractionId = null;
+    
+    tooltip.classList.remove('show');
+    setTimeout(() => {
+        if (pinnedAttractionId === null) {
+            tooltip.style.display = 'none';
+        }
+    }, 200);
 }
 
 function refreshReviews(attractionId) {

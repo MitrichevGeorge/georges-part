@@ -211,8 +211,9 @@ def query_ai_assistant(user_query):
         raise Exception(f"Ошибка соединения с API: {str(e)}")
 
 @main_bp.route('/map')
-def map_view():
-    return render_template("map.html", attractions=ATTRACTIONS)
+@main_bp.route('/map/<int:attraction_id>')
+def map_view(attraction_id=None):
+    return render_template("map.html", attractions=ATTRACTIONS, target_id=attraction_id)
 
 @main_bp.route('/streetview')
 def streetview_view():
