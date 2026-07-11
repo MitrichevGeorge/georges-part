@@ -198,7 +198,7 @@ def query_ai_assistant(user_query):
             f"{API_URL}/v1/chat/text",
             json=payload,
             headers=headers,
-            verify=False,
+            verify=True,
             timeout=30
         )
         
